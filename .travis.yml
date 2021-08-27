@@ -1,0 +1,23 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t davy/tra-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true davy/tra-test npm test -- --coverage
+
+after-success:
+  - docker build -t davy/multi-client ./client
+  - docker build -t davy/multi-nginx ./nginx
+  - docker build -t davy/multi-server ./server
+  - docker build -t davy/multi-worker ./worker
+  # logon docker cli
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push to docker hub
+  - docker push davy/multi-client
+  - docker push davy/multi-nginx
+  - docker push davy/multi-server
+  - docker push davy/multi-worker
