@@ -13,11 +13,11 @@ after-success:
   # - docker build -t davy/multi-client ./client
   # - docker build -t davy/multi-nginx ./nginx
   # - docker build -t davy/multi-server ./server
-  - docker build -t davy/multi-worker ./worker
+  - docker build -t davyjones27/multi-worker ./worker
   # logon docker cli
   - docker login -u "$DOCKER_ID" -p "$DOCKER_PASSWORD" docker.io
   # push to docker hub
   # - docker push davy/multi-client
   # - docker push davy/multi-nginx
   # - docker push davy/multi-server
-  - docker push davy/multi-worker
+  - docker push davyjones27/multi-worker
