@@ -7,7 +7,8 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Postgres Client Setup
 const { Pool } = require('pg');
@@ -18,6 +19,17 @@ const pgClient = new Pool({
   password: keys.pgPassword,
   port: keys.pgPort
 });
+
+const connect = async(client) => {
+  try {
+    await client.connect();
+    console.log(99);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 pgClient.on('error', () => console.log('Lost PG connection'));
 
 pgClient
@@ -40,9 +52,16 @@ app.get('/', (req, res) => {
 });
 
 app.get('/values/all', async (req, res) => {
-  const values = await pgClient.query('SELECT * from values');
+  try {
+    const values = await pgClient.query('SELECT * from values');
+    console.log(values);
+    res.send(values.rows);
+    
+  } catch (error) {
+    console.log(error);
+    res.send(error)
+  }
 
-  res.send(values.rows);
 });
 
 app.get('/values/current', async (req, res) => {
@@ -66,5 +85,6 @@ app.post('/values', async (req, res) => {
 });
 
 app.listen(5000, err => {
-  console.log('Listening');
+  connect(pgClient);
+  console.log('Listening!!');
 });
